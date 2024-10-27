@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  PYTHON_VERSION: '3.11' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'scrape_cinemas' # Ruta hacia tu función Azure Function
+  PYTHON_VERSION: '3.11' # Versión de Python
 
 jobs:
   build:
@@ -22,25 +22,29 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: List files in current directory
+        run: ls -R
+
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r scrape_cinemas/requirements.txt
 
       # Optional: Add step to run tests here
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r -x 'venv/*'
+        run: |
+          cd scrape_cinemas
+          zip ../release.zip ./* -r -x '__pycache__/*' -x 'venv/*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: python-app
-          path: |
-            release.zip
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
