@@ -59,4 +59,12 @@ jobs:
         run: ls -R
 
       - name: 'Deploy to Azure Functions'
-        
+        uses: Azure/functions-action@v1
+        id: deploy-to-function
+        with:
+          app-name: 'scrapingcinemasfunction'
+          slot-name: 'Production'
+          package: 'release.zip'  # Utilizamos el archivo zip para el despliegue
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E0B9F43DE6EF455CB88596B44235B0B6 }}
