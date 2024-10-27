@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'scrape_cinemas' # Ruta hacia tu función Azure Function
-  PYTHON_VERSION: '3.11' # Versión de Python
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: 'release.zip' # Usar el archivo zip generado para el despliegue
+  PYTHON_VERSION: '3.11'
 
 jobs:
   build:
@@ -55,16 +55,8 @@ jobs:
         with:
           name: python-app
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+      - name: List files to verify zip
+        run: ls -R
 
       - name: 'Deploy to Azure Functions'
-        uses: Azure/functions-action@v1
-        id: deploy-to-function
-        with:
-          app-name: 'scrapingcinemasfunction'
-          slot-name: 'Production'
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E0B9F43DE6EF455CB88596B44235B0B6 }}
+        
